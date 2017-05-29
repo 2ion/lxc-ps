@@ -1,0 +1,52 @@
+## lxc-ps
+
+An implementation of [lxc-ps(1)](https://linux.die.net/man/1/lxc-ps) for LXC 1.x and 2.x.
+
+The tool was originally included as a shell-script hack with LXC 0.x
+from where it got subsequently [removed](https://github.com/lxc/lxc/commit/7f12cae956c003445e6ee182b414617b52532af6).
+This is a clean implementation of the same CLI interface (with some extras)
+against liblxc, written in Python.
+
+## Synopsis
+
+```
+usage: lxc-ps [-h] [-n CONTAINER] [-x] [-l] [-d PATH] [psargs [psargs ...]]
+
+List the processes belonging to a specific LXC container
+
+positional arguments:
+  psargs                Extra arguments to ps(1). Note that extra arguments
+                        may undo any filtering done by the --lxc and --name
+                        options. Be cautious about uuid<>user name mappings,
+                        these use the UID associations of the host, not the
+                        container. This is a limitation of ps(1) which will
+                        only show numeric UIDs if the username is longer than
+                        12 characters. You can force this behaviour by
+                        specifying a custom column layout.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n CONTAINER, --name CONTAINER
+                        Only show processes from the given LXC container.
+  -x, --lxc             Only show processes from LXC containers.
+  -l, --list            Do not call ps(1), just list all containers with their
+                        PIDs
+  -d PATH, --lxc-directory PATH
+                        Path to the LXC container storage directory.
+```
+
+## Usage notes
+
+In order to hide ps(1) arguments from the Python argument parser, you
+**must** separate ps(1) arguments with a `--` from the lxc-ps arguments,
+like this:
+
+```sh
+lxc-ps --lxc -- f
+```
+
+## Dependencies
+
+ * Python 3
+ * python3-psutil
+ * python3-lxc

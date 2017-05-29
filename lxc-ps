@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+
+# lxc-ps implementation for lxc 1.x & 2.x
+
+from argparse import ArgumentParser
+import lxc
+import psutil
+import subprocess
+import sys
+
+def get_opts():
+    ap = ArgumentParser(description="List the processes belonging to a specific LXC container")
+
+    ap.add_argument("-n", "--name",
+            metavar="CONTAINER",
+            help="""
+Only show processes from the given LXC container.""")
+    ap.add_argument("-x", "--lxc",
+            default=False,
+            action='store_true',
+            help="""
+Only show processes from LXC containers.""")
+    ap.add_argument("-l", "--list",
+            default=False,
+            action='store_true',
+            help="""
+Do not call ps(1), just list all containers with their PIDs""")
+    ap.add_argument("-d", "--lxc-directory",
+            default="/var/lib/lxc",
+            metavar="PATH",
+            help="""
+Path to the LXC container storage directory.""")
+    ap.add_argument("psargs", nargs="*",
+            default=[],
+            help="""
+Extra arguments to ps(1). Note that extra arguments
+may undo any filtering done by the --lxc and --name options.
+Be cautious about uuid<>user name mappings, these use the
+UID associations of the host, not the container. This is a
+limitation of ps(1) which will only show numeric UIDs if the
+username is longer than 12 characters. You can force this
+behaviour by specifying a custom column layout.""")
+    return ap.parse_args()
+
+
+# Decorate ps(1) output with container names if the PID column is shown
+def decorate_ps_output(s, pidlookup, container_pids):
+    lines = s.splitlines()
+
+    if len(lines) == 0:
+        return s
+
+    # Find PID column (column order can be changed by ps arguments)
+    try:
+        pidcol = lines[0].split(sep=None).index('PID')
+    except ValueError as e:
+        return s
+
+    # Pad container names for CONTAINER output column
+    maxlen = len(max(container_pids, key=len))
+    maxlen = max(maxlen, len("CONTAINER"))
+
+    newlines = [ "CONTAINER".ljust(maxlen) + " " + lines[0] ]
+
+    for line in lines[1:]:
+        if len(line) == 0:
+            continue
+
+        cols = line.split(sep=None)
+        pid = int(cols[pidcol])
+
+        prefix = ""
+        if pid in pidlookup:
+            prefix = pidlookup[pid]
+
+        newlines.append(prefix.ljust(maxlen) + " " + line)
+
+    return "\n".join(newlines)
+
+def main():
+    opts = get_opts()
+
+    # Determine PID <-> container associations
+
+    container_pids = {}
+    pidlookup = {}
+
+    # Support both old (1.x) and current versions (5.x) of psutil
+    def process_children(pid):
+        p = psutil.Process(pid)
+        if p.get_children:
+            return p.get_children(recursive=True)
+        return p.children(recursive=True)
+
+    for c in lxc.list_containers(active=True, defined=True,
+            config_path=opts.lxc_directory, as_object=True):
+        if c.running and c.init_pid != -1:
+            container_pids[c.name] = [ c.init_pid ]
+            pidlookup[c.init_pid] = c.name
+            for p in process_children(c.init_pid):
+                pid = p.pid
+                container_pids[c.name].append(pid)
+                pidlookup[pid] = c.name
+
+    # Output
+
+    if opts.list:
+        for n in sorted(container_pids.keys()):
+            print("{}: {}".format(n, ",".join(map(str, container_pids[n]))))
+        return 0
+
+    ps_pidlist = []
+    if opts.name:
+        if not opts.name in container_pids:
+            print("ERROR: No container named {} exists".format(opts.name))
+            return 1
+        ps_pidlist = list(map(str, container_pids[opts.name]))
+    elif opts.lxc:
+        for c in container_pids:
+            ps_pidlist.extend(map(str, container_pids[c]))
+
+    try:
+        if len(ps_pidlist) > 0:
+            argv = [ "ps", "--pid", ",".join(ps_pidlist) ] + opts.psargs
+        else:
+            argv = [ "ps" ] + opts.psargs
+        o = subprocess.check_output(argv).decode("utf-8")
+    except CalledProcessError as e:
+        print("ERROR: failed to run ps command: ", e)
+        return e.returncode
+
+    print(decorate_ps_output(o, pidlookup, container_pids))
+
+    return 0
+
+if __name__ == "__main__":
+    sys.exit( main() )
