@@ -57,7 +57,7 @@ def decorate_ps_output(s, pidlookup, container_pids):
         return s
 
     # Pad container names for CONTAINER output column
-    maxlen = len(max(container_pids, key=len))
+    maxlen = len(max(container_pids, key=len, default=str()))
     maxlen = max(maxlen, len("CONTAINER"))
 
     newlines = [ "CONTAINER".ljust(maxlen) + " " + lines[0] ]
