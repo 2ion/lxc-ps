@@ -47,6 +47,13 @@ lxc-ps --lxc -- f
 
 ## Dependencies
 
- * Python 3
+ * Python 3.x
  * python3-psutil
  * python3-lxc
+
+## Packages
+
+Ports or packages have been prepared for the following operating
+systems:
+
+ * Arch Linux: [lxc-ps-git](https://aur.archlinux.org/packages/lxc-ps-git) (AUR)
