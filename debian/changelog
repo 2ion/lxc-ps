@@ -1,4 +1,4 @@
-lxc-ps (0.2-1) unstable; urgency=low
+lxc-ps (0.2-1) jessie-backports; urgency=low
 
   * Upstream release 0.2
 
