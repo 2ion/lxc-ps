@@ -57,7 +57,7 @@ lxc-ps --lxc -- f
 pip install lxc-ps
 ```
 
-'''NOTE''': You need to install python-lxc or whatever package provides
+**NOTA BENE**: You need to install python-lxc or whatever package provides
 the liblxc Python bindings on your distribution separately. This code
 does not exist on PyPi so its installation cannot be automated.
 
