@@ -1,14 +1,14 @@
 Source: lxc-ps
 Section: misc
 Priority: extra
-Maintainer: John Crawley <john@bunsenlabs.org>
+Maintainer: Jens John <dev@2ion.de>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.5
 Homepage: https://github.com/2ion/lxc-ps
 Vcs-Git: https://github.com/2ion/lxc-ps.git
 Vcs-Browser: https://github.com/2ion/lxc-ps
 
-Package: bunsen-configs
+Package: lxc-ps
 Architecture: all
 Depends: lxc, python3-lxc, python3-psutil
 Breaks: lxc (<< 1.0.0)
