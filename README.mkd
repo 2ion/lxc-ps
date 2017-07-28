@@ -51,6 +51,16 @@ lxc-ps --lxc -- f
  * python3-psutil
  * python3-lxc
 
+## Installation
+
+```
+pip install lxc-ps
+```
+
+'''NOTE''': You need to install python-lxc or whatever package provides
+the liblxc Python bindings on your distribution separately. This code
+does not exist on PyPi so its installation cannot be automated.
+
 ## Packages
 
 Ports or packages have been prepared for the following operating
