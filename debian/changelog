@@ -1,5 +1,0 @@
-lxc-ps (0.2-1) jessie-backports; urgency=low
-
-  * Upstream release 0.2
-
- -- Jens John <dev@2ion.de>  Thu, 27 Sep 2012 07:40:11 +0100
