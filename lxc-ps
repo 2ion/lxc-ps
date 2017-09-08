@@ -88,9 +88,10 @@ def main():
     # Support both old (1.x) and current versions (5.x) of psutil
     def process_children(pid):
         p = psutil.Process(pid)
-        if p.get_children:
+        try:
             return p.get_children(recursive=True)
-        return p.children(recursive=True)
+        except AttributeError:
+            return p.children(recursive=True)
 
     for c in lxc.list_containers(active=True, defined=True,
             config_path=opts.lxc_directory, as_object=True):
