@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(  name             = "lxc-ps",
-        version          = "0.2.5",
+        version          = "0.2.6",
         scripts          = [ "lxc-ps" ],
         install_requires = [ "psutil" ],
         author           = "Jens John",
