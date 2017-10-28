@@ -126,7 +126,7 @@ def main():
         else:
             argv = [ "ps" ] + opts.psargs
         o = subprocess.check_output(argv).decode("utf-8")
-    except CalledProcessError as e:
+    except subprocess.CalledProcessError as e:
         print("ERROR: failed to run ps command: ", e)
         return e.returncode
 
