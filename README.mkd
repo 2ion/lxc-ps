@@ -57,7 +57,14 @@ lxc-ps --lxc -- f
 pip install lxc-ps
 ```
 
-**NOTA BENE**: You need to install python-lxc or whatever package provides
+**CAVEAT**: On current Debian and Ubuntu distributions, and possibly
+others, you may need to run `pip3 install lxc-ps` instead if your
+system's default `pip` is still the Python2 one (which will install the
+package just fine, however the command will not execute correctly since
+`pip` mangles the script's shebang to point to Python2). You may also
+need to install `pip3` first using your distribution's package manager.
+
+**PLEASE NOTE**: You need to install python-lxc or whatever package provides
 the liblxc Python bindings on your distribution separately. This code
 does not exist on PyPi so its installation cannot be automated.
 
