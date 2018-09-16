@@ -2,14 +2,15 @@
 
 # lxc-ps implementation for lxc 1.x & 2.x
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import lxc
 import psutil
 import subprocess
 import sys
 
 def get_opts():
-    ap = ArgumentParser(description="List the processes belonging to a specific LXC container")
+    ap = ArgumentParser(description="List the processes belonging to a specific LXC container",
+            formatter_class = ArgumentDefaultsHelpFormatter)
 
     ap.add_argument("-n", "--name",
             metavar="CONTAINER",
