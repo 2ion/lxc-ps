@@ -1,6 +1,6 @@
 ## lxc-ps
 
-An implementation of [lxc-ps(1)](https://linux.die.net/man/1/lxc-ps) for LXC 1.x and 2.x.
+An implementation of [lxc-ps(1)](https://linux.die.net/man/1/lxc-ps) for LXC 1.x, 2.x and 3.x.
 
 The tool was originally included as a shell-script hack with LXC 0.x
 from where it got subsequently [removed](https://github.com/lxc/lxc/commit/7f12cae956c003445e6ee182b414617b52532af6).
